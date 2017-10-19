@@ -17,5 +17,8 @@ defmodule Translator do
       @locales {name, mappings}
     end
   end
-  
+
+  def compile(translations) do
+    # TODO
+  end
 end
