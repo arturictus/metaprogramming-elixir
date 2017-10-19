@@ -22,14 +22,34 @@ defmodule Translator do
     translations_ast = for {locale, mappings} <- translations do
                          deftranslations(locale, "", mappings)
                        end
-    quote do
-      def t(locale, path, bindings \\ [])
-      unquote(translations_ast)
-      def t(_locale, _path, _bindings), do: {:error, :no_translation}
+    final_ast = quote do
+                  def t(locale, path, bindings \\ [])
+                  unquote(translations_ast)
+                  def t(_locale, _path, _bindings), do: {:error, :no_translation}
+                end
+    # IO.puts Macro.to_string(final_ast)
+    final_ast
+  end
+
+  def deftranslations(locale, current_path, mappings) do
+    for {key, val} <- mappings do
+      path = append_path(current_path, key)
+      if Keyword.keyword?(val) do
+        deftranslations(locale, path, val)
+      else
+        quote do
+          def t(unquote(locale), unquote(path), bindings) do
+            unquote(interpolate(val))
+          end
+        end
+      end
     end
   end
 
-  def deftranslations(locales, current_path, mappings) do
-    #TODO
+  def interpolate(string) do
+    string # TODO
   end
+
+  def append_path("", next), do: to_string(next)
+  def append_path(current, next), do: "#{current}.#{next}"
 end
