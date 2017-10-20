@@ -28,6 +28,10 @@ defmodule Hub.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [
+      {:ibrowse, "~> 4.4"},
+      {:poison, "~> 3.1"},
+      {:httpotion, "~> 3.0"}
+    ]
   end
 end
